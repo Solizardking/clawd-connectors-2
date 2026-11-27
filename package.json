@@ -1,7 +1,7 @@
 {
   "name": "@openclawd/clawd-connectors",
-  "version": "0.1.0",
-  "description": "Clawd connectors — MCP-powered provider integrations for DFlow, Helius, Jupiter, and Birdeye",
+  "version": "0.2.0",
+  "description": "Clawd connectors — MCP-powered provider integrations for DFlow, Helius, Jupiter, Birdeye, Backpack, Imperial, Phoenix, Raydium, Metaplex, Sunrise, and all of Clawd Compute in one connector",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,6 +25,13 @@
     "helius",
     "jupiter",
     "birdeye",
+    "backpack",
+    "imperial",
+    "phoenix",
+    "raydium",
+    "metaplex",
+    "sunrise",
+    "x402",
     "ai",
     "agents"
   ],
