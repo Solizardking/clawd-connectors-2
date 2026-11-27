@@ -4,6 +4,9 @@
 export * from './types.js';
 export * from './providers/index.js';
 export { RemoteMcpClient, PaymentRequiredError, withPaymentHandling } from './mcp/client.js';
+export { buildToolRegistry, createToolRegistry, gateOptionsFromEnv } from './mcp/tools.js';
+export type { ServerToolDef, ToolGate, ToolGateOptions } from './mcp/tools.js';
+export { createConnectorsMcpServer, SERVER_NAME, SERVER_VERSION } from './mcp/server.js';
 import { getEnvConfig } from './config.js';
 import {
   DFlowConnector,

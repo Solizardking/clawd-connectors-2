@@ -90,7 +90,7 @@ export class RemoteMcpClient {
             requestInit: { headers },
             fetch: withPaymentHandling(fetch, this.paymentHandler, this.provider),
         });
-        this.client = new Client({ name: `clawd-connectors-${this.provider}`, version: '0.2.0' }, { capabilities: {} });
+        this.client = new Client({ name: `clawd-connectors-${this.provider}`, version: '0.3.0' }, { capabilities: {} });
         await this.client.connect(this.transport);
     }
     async listTools() {

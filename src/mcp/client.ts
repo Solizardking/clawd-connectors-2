@@ -124,7 +124,7 @@ export class RemoteMcpClient {
     });
 
     this.client = new Client(
-      { name: `clawd-connectors-${this.provider}`, version: '0.2.0' },
+      { name: `clawd-connectors-${this.provider}`, version: '0.3.0' },
       { capabilities: {} },
     );
 
