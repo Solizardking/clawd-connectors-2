@@ -73,6 +73,15 @@ async function main(): Promise<void> {
     console.log(`  HELIUS_API_KEY     ${env.heliusApiKey ? '✓ set' : '✗ missing'}`);
     console.log(`  JUPITER_API_KEY    ${env.jupiterApiKey ? '✓ set' : '✗ missing'}`);
     console.log(`  BIRDEYE_API_KEY    ${env.birdeyeApiKey ? '✓ set' : '✗ missing'}`);
+    console.log(`  IMPERIAL_JWT       ${env.imperialJwt ? '✓ set' : '✗ missing (public reads still work)'}`);
+    console.log(`  PINATA_JWT         ${env.pinataJwt ? '✓ set' : '✗ missing (Metaplex pinning off)'}`);
+    console.log(`  SOLANA_RPC_URL     ${env.solanaRpcUrl ? '✓ set' : '✗ default'}`);
+    console.log(
+      `  Trading opt-ins    imperial=${env.imperialAllowTrading ? 'ON' : 'off'} jupiter=${env.jupiterAllowTrading ? 'ON' : 'off'} (fail-closed by default)`,
+    );
+    console.log(
+      `  Broadcast opt-ins  raydium=${env.raydiumAllowBroadcast ? 'ON' : 'off'} helius=${env.heliusAllowBroadcast ? 'ON' : 'off'}`,
+    );
     console.log('');
 
     const connectors = createConnectors();
@@ -85,17 +94,50 @@ async function main(): Promise<void> {
 
   if (command === 'list-tools') {
     const provider = args[1]?.toLowerCase();
-    if (!provider || !['dflow', 'helius', 'jupiter', 'birdeye'].includes(provider)) {
-      console.error('usage: clawd-connectors list-tools <dflow|helius|jupiter|birdeye>');
+    const known = [
+      'dflow', 'helius', 'jupiter', 'birdeye', 'backpack', 'imperial',
+      'phoenix', 'raydium', 'metaplex', 'sunrise', 'clawd',
+    ];
+    if (!provider || !known.includes(provider)) {
+      console.error(`usage: clawd-connectors list-tools <${known.join('|')}> [--surface <clawd-surface>]`);
       process.exit(2);
     }
     const connectors = createConnectors();
-    const conn = connectors[provider as 'dflow' | 'helius' | 'jupiter' | 'birdeye'];
-    const tools = await conn.listTools();
-    console.log(`\n  ${provider} tools (${tools.length}):`);
+    const conn = connectors[provider as keyof typeof connectors];
+    // The Clawd connector fronts multiple surfaces; --surface picks one.
+    let tools;
+    if (provider === 'clawd') {
+      const { ClawdConnector } = await import('./providers/clawd.js');
+      const clawd = connectors.clawd as InstanceType<typeof ClawdConnector>;
+      const sIdx = args.indexOf('--surface');
+      const surface = (sIdx >= 0 ? args[sIdx + 1] : 'gateway') as Parameters<typeof clawd.listTools>[0];
+      tools = await clawd.listTools(surface);
+      console.log(`\n  clawd[${surface}] tools (${tools.length}):`);
+    } else {
+      tools = await conn.listTools();
+      console.log(`\n  ${provider} tools (${tools.length}):`);
+    }
     for (const t of tools) {
       console.log(`    • ${t.name}  — ${t.description}`);
     }
+    return;
+  }
+
+  if (command === 'clawd-surfaces') {
+    const { ClawdConnector } = await import('./providers/clawd.js');
+    const connectors = createConnectors();
+    const clawd = connectors.clawd as InstanceType<typeof ClawdConnector>;
+    console.log('\n  Clawd Compute surfaces (one connector):');
+    for (const s of clawd.surfaces()) {
+      console.log(
+        `    ${s.surface.padEnd(9)} ${s.kind.padEnd(8)} ${s.mcpUrl}  (probed ${s.probedToolCount ?? '?'} tools, 2026-11-27)`,
+      );
+    }
+    const skills = await clawd.listSkills().catch((e: Error) => {
+      console.log(`    skills    unavailable: ${e.message}`);
+      return [];
+    });
+    if (skills.length) console.log(`    skills    ${skills.length} skills in the catalogue`);
     return;
   }
 
@@ -105,10 +147,14 @@ async function main(): Promise<void> {
   USAGE:
     clawd-connectors status         Show API key + MCP status for all providers
     clawd-connectors list-tools <p> List MCP tools for a provider
+                                    (clawd takes --surface <gateway|equities|decide|perps|map|bubbles|monitor|heat|sun>)
+    clawd-connectors clawd-surfaces Show every Clawd Compute surface + skills count
+    clawd-connectors subscriptions  Pay subscriptions helper (list|status|new|cancel|refresh)
     clawd-connectors help           Show this help
 
   PROVIDERS:
-    dflow (https://api.paybox.sh/mcp?app=dflow) · helius · jupiter · birdeye
+    dflow · helius · jupiter · birdeye · backpack · imperial · phoenix ·
+    raydium · metaplex · sunrise · clawd (all of Clawd Compute in one)
   `);
 }
 

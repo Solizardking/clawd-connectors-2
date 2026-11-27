@@ -1,5 +1,5 @@
 /**
- * Clawd Connectors — tests
+ * Clawd Connectors — tests (original four providers)
  */
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,6 +10,14 @@ import {
   JupiterConnector,
   BirdeyeConnector,
 } from '../src/index.js';
+
+// MCP URLs are blanked so status() stays hermetic (no live MCP connects).
+const NO_MCP = {
+  dflowMcpUrl: '',
+  heliusMcpUrl: '',
+  jupiterMcpUrl: '',
+  birdeyeMcpUrl: '',
+} as const;
 
 describe('Clawd Connectors', () => {
   it('creates all four providers via factory', () => {
@@ -29,7 +37,7 @@ describe('Clawd Connectors', () => {
   });
 
   it('status reports configured=false when keys+urls missing', async () => {
-    const connectors = createConnectors({});
+    const connectors = createConnectors({ ...NO_MCP });
     for (const key of ['dflow', 'helius', 'jupiter', 'birdeye'] as const) {
       const s = await connectors[key].status();
       assert.equal(s.provider, key);
@@ -39,6 +47,7 @@ describe('Clawd Connectors', () => {
 
   it('status lists configured status with explicit keys', async () => {
     const connectors = createConnectors({
+      ...NO_MCP,
       dflowApiKey: 'test-dflow',
       heliusApiKey: 'test-helius',
       jupiterApiKey: 'test-jupiter',
@@ -52,7 +61,7 @@ describe('Clawd Connectors', () => {
   });
 
   it('listTools without MCP URL throws a clear error', async () => {
-    const connectors = createConnectors({});
-    await assert.rejects(() => connectors.jupiter.listTools(), /no MCP URL configured/);
+    const conn = new JupiterConnector({ apiKey: '', mcpUrl: '' });
+    await assert.rejects(() => conn.listTools(), /no MCP URL configured/);
   });
 });

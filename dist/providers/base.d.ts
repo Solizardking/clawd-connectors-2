@@ -17,6 +17,14 @@ export declare abstract class BaseConnector implements ClawdConnector {
     callTool(name: string, args: Record<string, unknown>): Promise<McpCallResult>;
     /** REST GET with the provider API key header */
     protected restGet<T>(path: string, headers?: Record<string, string>): Promise<T>;
+    /** REST POST with a JSON body and the provider API key header */
+    protected restPost<T>(path: string, body: unknown, headers?: Record<string, string>): Promise<T>;
+    /** Authorization header for JWT-gated providers (Imperial). */
+    protected bearerHeaders(): Record<string, string>;
+    /** Fail-closed gate for value-moving calls. */
+    protected requireTrading(action: string): void;
+    /** Fail-closed gate for broadcasting already-signed transactions. */
+    protected requireBroadcast(action: string): void;
     status(): Promise<ProviderStatus>;
 }
 //# sourceMappingURL=base.d.ts.map

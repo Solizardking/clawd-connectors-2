@@ -7,6 +7,17 @@ export interface EnvConfig {
     heliusMcpUrl: string;
     jupiterMcpUrl: string;
     birdeyeMcpUrl: string;
+    imperialJwt: string;
+    imperialAllowTrading: boolean;
+    jupiterAllowTrading: boolean;
+    raydiumAllowBroadcast: boolean;
+    heliusAllowBroadcast: boolean;
+    solanaRpcUrl: string;
+    heliusRpcUrl: string;
+    heliusNetwork: 'mainnet' | 'devnet';
+    pinataJwt: string;
+    clawdMcpUrl: string;
+    clawdEquitiesMcpUrl: string;
     timeoutMs: number;
 }
 export declare function getEnvConfig(): EnvConfig;
