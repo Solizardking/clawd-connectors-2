@@ -38,6 +38,7 @@ export abstract class BaseConnector implements ClawdConnector {
         mcpUrl: this.config.mcpUrl,
         apiKey: this.config.apiKey,
         timeoutMs: this.config.timeoutMs,
+        paymentHandler: this.config.paymentHandler,
       });
     }
     return this.mcp;
