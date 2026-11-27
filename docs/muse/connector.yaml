@@ -1,0 +1,6 @@
+id: "custom.clawd-connectors"
+title: "Clawd Connectors"
+description: "Use the Clawd Connectors package (@openclawd/clawd-connectors, github.com/Solizardking/clawd-connectors-2): its local MCP server (clawd-connectors-mcp, 76 read tools by default) fronts Backpack, Imperial, Phoenix, Raydium, Metaplex, Sunrise, Helius, Jupiter, Birdeye, DFlow and the whole Clawd Compute gateway; keys are env-only and trading/broadcast/payment paths stay fail-closed behind explicit opt-in flags."
+aliases: ["Clawd Connectors", "clawd-connectors-2", "clawd-connectors-mcp", "@openclawd/clawd-connectors"]
+include_in_prompt: true
+require_auth: false

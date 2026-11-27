@@ -52,6 +52,33 @@ const boardTools = await c.clawd.listTools("bubbles");     // board surfaces too
 const skills = await c.clawd.listSkills();                 // skills catalogue
 ```
 
+## Use it with your agent
+
+The package ships its own **MCP server** — `clawd-connectors-mcp` —
+so Muse, Claude, ChatGPT, Grok bots and Muse itself can use the
+connectors directly:
+
+```bash
+npm install && npm run build
+npx clawd-connectors-mcp           # stdio — 76 read tools, fail-closed
+npx clawd-connectors-mcp --http    # streamable HTTP on :8931
+```
+
+- **Hosted (zero install):** point any MCP client at the Clawd Compute
+  gateway, `https://mcp.clawdcompute.us/mcp`.
+- **Local (full provider set):** run the server above with your own env
+  keys. Trading/broadcast tools register only behind the opt-in flags
+  (84 tools with all of them on); the server never embeds a wallet and
+  never pays x402 challenges.
+
+Per-client setup — copy-paste configs included — lives in
+**[docs/clients.md](docs/clients.md)** with ready files in
+[`examples/`](examples/): Claude Desktop + Code, ChatGPT
+(`examples/chatgpt.md`), a Bot Connect manifest for Grok bots
+(`examples/connect.json`), a Muse connector doc (`docs/muse/`), and a
+generic `mcpServers` config for any other client. Site:
+<https://connector.clawdcompute.us>.
+
 ## The Clawd connector
 
 One provider (`connectors.clawd`) fronts every Clawd Compute surface —
